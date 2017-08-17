@@ -1,21 +1,18 @@
 package com.androidizate.clase6;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
 import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, FiveFragment.OnFragmentInteractionListener {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,14 +53,34 @@ public class MainActivity extends AppCompatActivity
             fragment = new SecondFragment();
         } else if (id == R.id.nav_third_fragment) {
             fragment = new ThirdFragment();
+        } else if (id == R.id.nav_four_fragment) {
+            fragment = new FourFragment();
+        } else if (id == R.id.nav_maps_fragment) {
+            fragment = new FiveFragment();
         }
 
-        if (fragment != null) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, fragment.getClass().getSimpleName()).commit();
+        String loSimpleName = fragment.getClass().getSimpleName();
+
+        if (fragment != null && !fragmentExists(loSimpleName)) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.container, fragment, loSimpleName).commit();
+
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    private boolean fragmentExists(String pSimpleName) {
+        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+            if (fragment != null && pSimpleName.equals(fragment.getClass().getSimpleName()))
+                return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onFragmentInteraction() {
+        startActivity(new Intent(MainActivity.this, MapsActivity.class));
     }
 }
